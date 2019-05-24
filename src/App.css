@@ -1,0 +1,92 @@
+
+.ReqList table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.ReqList tr {
+  cursor: pointer;
+}
+
+.ReqList tr:nth-child(even) {
+  background-color: rgb(245, 245, 245);
+}
+
+.ReqList th {
+  text-align: left;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid rgb(205, 205, 205);
+  font-weight: normal;
+  vertical-align: middle;
+  line-height: 18px;
+  height: 27px;
+  padding: 1px 4px;
+}
+
+.ReqList th, .ReqList td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 18px;
+  padding: 1px 4px;
+}
+
+.ReqList tr.active {
+  background-color: rgb(221, 238, 255);
+}
+
+/* detail */
+.ReqDetail {
+  position: fixed;
+  top: 0;
+  left: 248px;
+  bottom: 0;
+  right: 0;
+  z-index: 99;
+  overflow: hidden;
+  border-left: 1px solid #d0d0d0;
+  background: #fff;
+}
+
+.ReqDetail .tabList span {
+  vertical-align: middle;
+}
+
+.ReqDetail .tabList {
+  background-color: #f3f3f3;
+  border-bottom: 1px solid rgb(205, 205, 205);
+  line-height: 27px;
+  height: 27px;
+  padding: 1px 4px;
+  font-size: 12px;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.ReqDetail .detail-close {
+  width: 16px;
+  text-align: center;
+  margin-right: 8px;
+  font-size: 16px;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+.ReqDetail .details-body {
+  padding: 0 12px 20px;
+  position: absolute;
+  top: 30px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: auto;
+}
+
+.ReqDetail .detail-label {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 24px;
+}

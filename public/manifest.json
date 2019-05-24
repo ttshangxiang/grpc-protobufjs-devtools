@@ -2,7 +2,11 @@
   "name": "test-grpc-devtools",
   "version": "1.0",
   "description": "test-grpc-devtools",
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "permissions": [
+    "tabs",
+    "http://*/",
+    "https://*/"
+  ],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
