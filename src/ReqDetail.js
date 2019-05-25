@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ObjectRootLabel, ObjectLabel, ObjectInspector, TableInspector } from 'react-inspector'
+import { ObjectRootLabel, ObjectLabel, ObjectInspector } from 'react-inspector'
 
 const defaultNodeRenderer = ({ depth, name, data, isNonenumerable, expanded }) =>
   depth === 0
@@ -8,9 +8,6 @@ const defaultNodeRenderer = ({ depth, name, data, isNonenumerable, expanded }) =
     : <ObjectLabel name={name} data={data} isNonenumerable={isNonenumerable} />;
 
 class ReqDetail extends React.Component {
-  constructor (props) {
-    super(props)
-  }
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.current !== this.props.current) {
       return true;

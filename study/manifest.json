@@ -1,7 +1,7 @@
 {
-  "name": "grpc-protobufjs-devtools",
-  "version": "0.0.1",
-  "description": "grpc, proto, protobufjs, devtools, chrome, extensions",
+  "name": "test-grpc-devtools",
+  "version": "1.0",
+  "description": "test-grpc-devtools",
   "permissions": [
     "tabs",
     "http://*/",

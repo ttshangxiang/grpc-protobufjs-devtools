@@ -9,9 +9,8 @@ chrome.devtools.panels.create("grpc",
       chrome.devtools.network.onRequestFinished.addListener(function (ctx) {
         if (ctx.request && ctx.request.postData &&
           ctx.request.postData.mimeType === 'application/grpc-web-text') {
-          ctx._uid = guid();
-          extPanelWindow.__addReq(ctx);
           const url = ctx.request.url;
+          extPanelWindow.__addReq(ctx);
           decodeProto(ctx.request.postData.text, url, 'req', function (err, data) {
             ctx.requestBody = data || err;
             extPanelWindow.__updateReq(ctx);
@@ -28,6 +27,34 @@ chrome.devtools.panels.create("grpc",
   }
 );
 
+// Create a connection to the background page
+var backgroundPageConnection = chrome.runtime.connect({
+  name: "devtools"
+});
+
+backgroundPageConnection.postMessage({
+  name: 'init',
+  tabId: chrome.devtools.inspectedWindow.tabId
+});
+
+// Relay the tab ID to the background page
+backgroundPageConnection.postMessage({
+  name: 'inject',
+  tabId: chrome.devtools.inspectedWindow.tabId,
+  contentScript: "contentScript.js"
+});
+
+backgroundPageConnection.onMessage.addListener(function (message) {
+  if (message.error) {
+    console.error(message.error);
+    return;
+  }
+  if (message.type === 'from-page' && message.method) {
+    __callbacks[message.method.callId](message.data);
+    delete __callbacks[message.method.callId];
+  }
+});
+
 // 生成唯一id
 function guid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -36,13 +63,40 @@ function guid() {
   });
 }
 
-// protobufjs root
-window.$root = null;
+// postMessage的标志
+const sourceKey = 'grpc-protobufjs-devtools-extension'
+// 存储callback
+const __callbacks = {};
 
 /**
- * 获取protobufjs root
- * @param {*} callback 
+ * 调用网页中window上的方法
+ * @param {*} name 方法名称
+ * @param {*} params 参数
+ * @param {*} isSync 调用的方法是否同步
+ * @param {*} callback 回调方法
  */
+function callFunction(name, params, isSync, callback) {
+  const callId = guid();
+  if (!Array.isArray(params)) {
+    params = [params];
+  }
+  if (callback) {
+    __callbacks[callId] = callback;
+  }
+  const message = JSON.stringify({
+    source: sourceKey,
+    type: 'call-function',
+    method: {
+      callId: callId,
+      sync: !!isSync,
+      name: name,
+      params: params
+    }
+  })
+  chrome.devtools.inspectedWindow.eval(`window.postMessage('${message}')`)
+}
+
+window.$root = null;
 function getProtoRoot(callback) {
   if (window.$root) {
     callback(null, window.$root);
@@ -75,13 +129,6 @@ function getProtoRoot(callback) {
     })
 }
 
-/**
- * 解压proto
- * @param {*} str base64字符串
- * @param {*} url 访问地址
- * @param {*} type req还是res
- * @param {*} callback 
- */
 function decodeProto (str, url, type, callback) {
   getProtoRoot(function (err, root) {
     if (err) {

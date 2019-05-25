@@ -17,6 +17,10 @@ class App extends React.Component {
     this.setState({currentReq: req});
   }
 
+  clearList () {
+    this.setState({reqList: [], currentReq: null});
+  }
+
   componentDidMount () {
     window.__addReq = (req) => {
       let list = this.state.reqList;
