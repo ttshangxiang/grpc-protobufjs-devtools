@@ -11,6 +11,7 @@ class App extends React.Component {
       currentReq: null
     }
     this.setCurrentReq = this.setCurrentReq.bind(this);
+    this.clearList = this.clearList.bind(this);
   }
 
   setCurrentReq (req) {
@@ -45,7 +46,8 @@ class App extends React.Component {
       <div className="App">
         <ReqList list={this.state.reqList}
           current={this.state.currentReq}
-          setCurrentReq={this.setCurrentReq} />
+          setCurrentReq={this.setCurrentReq}
+          clearList={this.clearList} />
         <ReqDetail current={this.state.currentReq}
           setCurrentReq={this.setCurrentReq} />
       </div>
