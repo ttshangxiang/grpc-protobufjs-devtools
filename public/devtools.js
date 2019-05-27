@@ -10,20 +10,31 @@ chrome.devtools.panels.create("grpc",
         if (ctx.request && ctx.request.postData &&
           ctx.request.postData.mimeType === 'application/grpc-web-text') {
           ctx._uid = guid();
-          extPanelWindow.__addReq(ctx);
+          extPanelWindow.__addReq && extPanelWindow.__addReq(ctx);
           const url = ctx.request.url;
           decodeProto(ctx.request.postData.text, url, 'req', function (err, data) {
-            ctx.requestBody = data || err;
-            extPanelWindow.__updateReq(ctx);
+            if (err) {
+              data = err.message + ' body: ' + data;
+            }
+            ctx.requestBody = data;
+            extPanelWindow.__updateReq && extPanelWindow.__updateReq(ctx);
           });
           ctx.getContent(function (body) {
             decodeProto(body, url, 'res', function (err, data) {
-              ctx.responseBody = data || err;
-              extPanelWindow.__updateReq(ctx);
+              if (err) {
+                data = err.message + ' body: ' + data;
+              }
+              ctx.responseBody = data;
+              extPanelWindow.__updateReq && extPanelWindow.__updateReq(ctx);
             });
           })
         }
       })
+
+      // 刷新
+      chrome.devtools.network.onNavigated.addListener(function () {
+        extPanelWindow.__refresh && extPanelWindow.__refresh();
+      });
     });
   }
 );
@@ -70,6 +81,8 @@ function getProtoRoot(callback) {
             window.$root = root;
             callback(null, root)
           });
+        } else {
+          callback(new Error('window.__DEVTOOLS_PROTO_JSON__ is null.'))
         }
       }
     })
@@ -86,7 +99,7 @@ function decodeProto (str, url, type, callback) {
   getProtoRoot(function (err, root) {
     if (err) {
       console.log(err)
-      callback(err);
+      callback(err, str);
       return;
     }
     try {
@@ -113,7 +126,7 @@ function decodeProto (str, url, type, callback) {
       }
     } catch (error) {
       console.log(error);
-      callback(error);
+      callback(error, str);
     }
   })
 }

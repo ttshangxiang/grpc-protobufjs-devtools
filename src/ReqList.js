@@ -31,7 +31,7 @@ class ReqList extends React.Component {
           <table>
             <tbody>
             {this.props.list.map((item, index) => (
-              <tr key={index} onClick={() => this.props.setCurrentReq(item)}
+              <tr key={index} onClick={() => this.props.setCurrentReq(item)} data-uid={item._uid}
                 className={this.props.current && item._uid === this.props.current._uid ? 'active' : ''}>
                 <td style={{width: 240}} title={item.request.url}>{this.getFileName(item.request.url)}</td>
                 <td style={{width: 60}}>{item.response.status}</td>

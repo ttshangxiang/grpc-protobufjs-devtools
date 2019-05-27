@@ -12,17 +12,7 @@ class App extends React.Component {
     }
     this.setCurrentReq = this.setCurrentReq.bind(this);
     this.clearList = this.clearList.bind(this);
-  }
 
-  setCurrentReq (req) {
-    this.setState({currentReq: req});
-  }
-
-  clearList () {
-    this.setState({reqList: [], currentReq: null});
-  }
-
-  componentDidMount () {
     window.__addReq = (req) => {
       let list = this.state.reqList;
       list = list.concat(req);
@@ -39,6 +29,17 @@ class App extends React.Component {
       list = list.concat([]);
       this.setState({reqList: list});
     }
+    window.__refresh = () => {
+      this.clearList()
+    }
+  }
+
+  setCurrentReq (req) {
+    this.setState({currentReq: req});
+  }
+
+  clearList () {
+    this.setState({reqList: [], currentReq: null});
   }
 
   render () {
