@@ -4,8 +4,8 @@ chrome.devtools.panels.create("grpc",
   "index.html",
   function (panel) {
     // 控制panel页面
-    panel.onShown.addListener(function (panel) {
-      extPanelWindow = panel;
+    panel.onShown.addListener(function (w) {
+      extPanelWindow = w;
     });
   }
 );
