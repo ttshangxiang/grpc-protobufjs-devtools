@@ -277,4 +277,4 @@ GrpcWebStreamParser.prototype.parse = function(input) {
 
 
 // exports = GrpcWebStreamParser;
-module.exports = GrpcWebStreamParser
+window.GrpcWebStreamParser = GrpcWebStreamParser
