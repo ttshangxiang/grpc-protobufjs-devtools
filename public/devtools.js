@@ -141,11 +141,11 @@ function decodeProto (str, url, type, callback) {
       const serviceName = arr[arr.length - 2];
       const service = root.lookup(serviceName);
       const method = service.methods[methodName];
-      let messageName = method.requestType;
+      const resolvedMethod = method.resolve();
+      let message = resolvedMethod.resolvedRequestType;
       if (type === 'res') {
-        messageName = method.responseType;
+        message = resolvedMethod.resolvedResponseType;
       }
-      const message = root.lookupType(messageName);
       let result = message.decode(buffer);
       // 解析any
       if (message && message._fieldsArray) {
