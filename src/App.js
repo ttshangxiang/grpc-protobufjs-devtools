@@ -20,12 +20,16 @@ class App extends React.Component {
     }
     window.__updateReq = (req) => {
       let list = this.state.reqList;
+      let found = false;
       list.forEach((item, index) => {
-        if (req.startedDateTime === item.startedDateTime
-          && req.request.url === item.request.url) {
+        if (req._uid === item._uid) {
           list.splice(index, 1, req);
+          found = true;
         }
       })
+      if (!found) {
+        list.push(req);
+      }
       list = list.concat([]);
       this.setState({reqList: list});
     }
