@@ -1,6 +1,7 @@
 
 ## grpc-protobufjs-devtools
 
+适用于利用grpc-web发送的请求，如果利用axios发送和接收请求，有不同的编码规则，需要自行修改devtools.js的相关代码。
 
 #### build
 ```

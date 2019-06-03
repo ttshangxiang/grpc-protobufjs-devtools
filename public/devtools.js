@@ -111,6 +111,7 @@ function decodeProto (str, url, type, callback) {
       let buffer = base64js.toByteArray(str);
       // grpc-web 按照规则接收数据，详情请见./GrpcWebStreamParser.js
       if (type === 'res') {
+        // grpc-web 需要二次base64转码
         str = multiple4(String.fromCharCode.apply(null, buffer));
         const parser_ = new GrpcWebStreamParser()
         const byteSource = base64js.toByteArray(str);
