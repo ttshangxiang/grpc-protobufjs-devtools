@@ -2,12 +2,6 @@
   "name": "grpc-protobufjs-devtools",
   "version": "0.0.1",
   "description": "grpc, proto, protobufjs, devtools, chrome, extensions",
-  "permissions": [
-    "tabs",
-    "http://*/",
-    "https://*/",
-    "file://*/"
-  ],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
@@ -19,6 +13,6 @@
     "48": "images/get_started48.png",
     "128": "images/get_started128.png"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';",
   "manifest_version": 2
 }

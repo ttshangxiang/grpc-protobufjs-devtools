@@ -7,6 +7,8 @@ chrome.devtools.panels.create("grpc",
     panel.onShown.addListener(function (w) {
       extPanelWindow = w;
     });
+    // 获取proto
+    getProtoRoot();
   }
 );
 
@@ -35,6 +37,16 @@ chrome.devtools.network.onRequestFinished.addListener(function (ctx) {
         extPanelWindow.__updateReq && extPanelWindow.__updateReq(ctx);
       });
     })
+  } else if (ctx.request && __PROTO_JS_URL__ && ctx.request.url.indexOf(__PROTO_JS_URL__) > -1) {
+    ctx.getContent(function (body) {
+      new Function (body)();
+      if (protobuf.roots && protobuf.roots.default) {
+        window.$root = protobuf.roots.default;
+        EE.emit('callback', null, window.$root);
+      } else {
+        EE.emit('callback', new Error('__PROTO_JS_URL__ load faild'));
+      }
+    });
   }
 })
 
@@ -53,6 +65,9 @@ function guid() {
 
 // protobufjs root
 window.$root = null;
+window.__PROTO_JS_URL__ = '';
+
+const EE = new EventEmitter3();
 
 /**
  * 获取protobufjs root
@@ -64,10 +79,10 @@ function getProtoRoot(callback) {
     return;
   }
   chrome.devtools.inspectedWindow.eval(
-    '[window.location.origin, window.__DEVTOOLS_PROTO_JSON__]',
+    '[window.location.origin, window.__DEVTOOLS_PROTO_JS__]',
     function (result, isException) {
       if (isException) {
-        callback('chrome.devtools.inspectedWindow.eval fail');
+        callback(new Error('chrome.devtools.inspectedWindow.eval fail'));
       } else {
         if (result && result[1]) {
           let url = result[1];
@@ -77,16 +92,10 @@ function getProtoRoot(callback) {
             }
             url = result[0] + url;
           }
-          protobuf.load(url, function (err, root) {
-            if (err) {
-              callback(err)
-              return;
-            }
-            window.$root = root;
-            callback(null, root)
-          });
+          loadJS(url);
+          EE.once('callback', callback);
         } else {
-          callback(new Error('window.__DEVTOOLS_PROTO_JSON__ is null.'))
+          callback(new Error('window.__DEVTOOLS_PROTO_JS__ is null.'))
         }
       }
     })
@@ -173,4 +182,27 @@ function multiple4 (str) {
   var newPos = str.length - str.length % 4;
   var newData = str.substr(0, newPos);
   return newData;
+}
+
+// 加载js
+function loadJS (url) {
+  window.__PROTO_JS_URL__ = url;
+  chrome.devtools.inspectedWindow.eval(
+    `
+    (function () {
+      let script = document.getElementById('__proto_js__');
+      if (!script) {
+        script = document.createElement('script');
+        script.id = '__proto_js__';
+        document.body.appendChild(script);
+      }
+      script.src = '${url}' + '?_=' + new Date().getTime();
+    })()
+    `,
+    function (result, isException) {
+      if (isException) {
+        console.log(isException)
+      }
+    }
+  )
 }
