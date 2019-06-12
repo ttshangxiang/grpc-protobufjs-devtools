@@ -13,9 +13,10 @@ npm run build
 devtools code: ./public  
 interface code: ./src  
 
+
 ### use
 1, chrome://extensions/, 开发者模式(developer mode)，加载已解压的文件，选择build目录
-2, use node and protobufjs create proto.js.
+2, 使用node和protobufjs创建proto.js。
 ``` javascript
 const pbjs = require("protobufjs/cli/pbjs");
 const fs = require('fs');
@@ -32,7 +33,7 @@ pbjs.main([ "--target", "json-module", "-w", "commonjs", ...protos], function(er
   fs.writeFileSync(path.resolve(__dirname, './src/xxx/proto.js'), output);
 });
 ``` 
-3, mount json string to window.
+3, 挂载json字符串到window。
 ``` javascript
 const $root = require('./src/xxx/proto.js');
 window.__DEVTOOLS_PROTO_JSON_STRING__ = JSON.stringify($root.toJSON({keepComments: true}));
