@@ -25,16 +25,15 @@ const glob = require('glob');
 const protoPath = 'src/proto/**/*.proto'; // origin path
 const protos = glob.sync(protoPath);
 
-pbjs.main([ "--target", "json-module", "-w", "closure", ...protos], function(err, output) {
+pbjs.main([ "--target", "json-module", "-w", "commonjs", ...protos], function(err, output) {
   if (err)
     throw err;
   // target path
-  fs.writeFileSync(path.resolve(__dirname, './static/xxx/proto.js'), output);
+  fs.writeFileSync(path.resolve(__dirname, './src/xxx/proto.js'), output);
 });
 ``` 
-3, mount json url to window.
+3, mount json string to window.
 ``` javascript
-window.__DEVTOOLS_PROTO_JS__ = '/static/xxx/proto.js'
-//or
-window.__DEVTOOLS_PROTO_JS__ = 'http://example.com/static/xxx/proto.js'
+const $root = require('./src/xxx/proto.js');
+window.__DEVTOOLS_PROTO_JSON_STRING__ = JSON.stringify($root.toJSON({keepComments: true}));
 ```
