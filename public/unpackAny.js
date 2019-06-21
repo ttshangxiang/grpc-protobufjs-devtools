@@ -31,7 +31,10 @@
         return o
       }
       typeCache[typestr] = type
-      return type.decode(o.value)
+      if (typeof o.value === 'string') {
+        o.value = base64js.toByteArray(o.value)
+      }
+      return type.toObject(type.decode(o.value), window.ConversionOptions)
     }
     return o
   }
